@@ -17,9 +17,9 @@ if __name__ == "__main__":
     LOG_NAME = 'DestructionServer.log'
 
     # Setup logging
-    fmt = '%(asctime)s %(levelname)-9s: %(threadName)-16s|| %(name)-35s %(funcName)-25s >> %(message)s'
+    fmt = '%(asctime)s %(levelname)-9s: %(threadName)-22s|| %(name)-35s %(funcName)-25s >> %(message)s'
     log_basicConfig(LOG_NAME, LOG_LEVEL, filemode='a', fmt=fmt)
-    fmt = '%(levelname)-9s: %(threadName)-16s|| %(name)-35s %(funcName)-25s >> %(message)s'
+    fmt = '%(levelname)-9s: %(threadName)-22s|| %(name)-35s %(funcName)-25s >> %(message)s'
     add_stream_handler(LOG_LEVEL, fmt=fmt)
 
     # Start server destruction

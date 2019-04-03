@@ -50,7 +50,7 @@ class DestructServer(object):
         self._sendingThreads = []    # type: Threads
         self._registerLock = threading.Lock()
         self._count = 0
-        self._nameT = '{0}Thread-{1}'
+        self._nameT = '{0}-{2}::{1}'
 
     def Start(self) -> bool:
         """Start TCP server."""
@@ -131,11 +131,11 @@ class DestructServer(object):
                     # Start threads
                     self._listeningThreads.append(threading.Thread(target=self._ListenClient,
                                                                    args=(newClient, addr),
-                                                                   name=self._nameT.format('Receive', self._count)))
+                                                                   name=self._nameT.format('Receive', addr[0], self._count)))
                     self._listeningThreads[-1].start()
                     self._sendingThreads.append(threading.Thread(target=self._SendClient,
                                                                  args=(newClient, addr),
-                                                                 name=self._nameT.format('Send', self._count)))
+                                                                 name=self._nameT.format('Send', addr[0], self._count)))
                     self._sendingThreads[-1].start()
 
                 self._count += 1
