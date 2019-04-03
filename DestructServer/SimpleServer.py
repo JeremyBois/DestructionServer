@@ -6,6 +6,8 @@
       - Two thread for each new client
         - Listening thread
         - Sending thread
+
+    @TODO Communication between thread (send <--> receive)
 """
 
 import logging
@@ -50,7 +52,7 @@ class DestructServer(object):
         self._sendingThreads = []    # type: Threads
         self._registerLock = threading.Lock()
         self._count = 0
-        self._nameT = '{0}-{2}::{1}'
+        self._nameT = '{0}({2})::{1}'
 
     def Start(self) -> bool:
         """Start TCP server."""
@@ -60,7 +62,7 @@ class DestructServer(object):
 
             # Start thread to handle client connection
             self._acceptThread = threading.Thread(target=self._StartServer,
-                                                  name='AcceptThread')
+                                                  name='Accept')
             self._acceptThread.start()
 
         except socket.error as err:
@@ -142,9 +144,26 @@ class DestructServer(object):
 
     def _ListenClient(self, client: socket.socket, addr: tuple):
         self.logging.debug('Starting Listen thread for {0}:{1}.'.format(addr[0], str(addr[1])))
+        # Infinite loop so that function do not terminate and thread do not end.
+        data = ''.encode()
+        eolWindows = '\r\n'.encode()
+        while self._running:
+            data += client.recv(4096)
+
+            # Only EOL --> stop listening
+            if data == eolWindows:
+                break
+
+            # Wait for EOL before building response
+            # @TODO Should be in Send
+            if eolWindows in data:
+                reply = 'MSG --> ' + data.decode().splitlines()[-1] + '\r\n'
+                data = ''.encode()
+                client.sendall(reply.encode())
 
     def _SendClient(self, client: socket.socket, addr: tuple):
         self.logging.debug('Starting Send thread for {0}:{1}.'.format(addr[0], str(addr[1])))
+        client.send('Welcome to the server. Type something and hit enter\n'.encode())
 
     def _StopAccept(self):
         """Connect to yourself to unlock `func::_AcceptLoop` blocking call to go out of infinite loop without errors"""
