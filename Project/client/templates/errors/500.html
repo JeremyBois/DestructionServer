@@ -1,0 +1,12 @@
+{% extends "_base.html" %}
+{% block page_title %}- Server Error{% endblock %}
+{% block content %}
+
+<div class="jumbotron">
+  <div class="text-center">
+    <h1>500</h1>
+    <p>Désolé mais une erreur non gérée est survenue merci de contacter le gestionnaire. Revenir à <a href="{{ url_for('main.home')}}">l’acceuil</a> ?</p>
+  </div>
+</div>
+
+{% endblock %}

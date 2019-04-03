@@ -1,0 +1,56 @@
+<!-- Macro to render a string field with error support -->
+{% macro render_stringField(field, value='') %}
+    <div class="input-group">
+        {% if label %}
+            {{ field.label }}
+        {% endif %}
+        {{ field(placeholder=field.label.text, value=value, class=kwargs['class']) }}
+        {% if field.errors %}
+            <span class="error">
+                {% for error in field.errors %}
+                    {{ error }}
+                {% endfor %}
+            </span>
+        {% endif %}
+    </div>
+{% endmacro %}
+
+
+<!-- Macro to render a select field with error support -->
+{% macro render_selectField(field, label=True) %}
+    <div class="input-group">
+        {% if label %}
+            {{ field.label }}
+        {% endif %}
+        {{ field(class=kwargs['class']) }}
+        {% if field.errors %}
+            <span class="error">
+                {% for error in field.errors %}
+                    {{ error }}
+                {% endfor %}
+            </span>
+        {% endif %}
+    </div>
+{% endmacro %}
+
+
+<!-- Macro to render a checkbox field with error support -->
+{% macro render_checkboxField(field, label=True) %}
+    <div class="input-group">
+        <label>
+            {{ field }}
+            <span class="label-text">
+                {% if label %}
+                    {{ field.label.text }}
+                {% endif %}
+            </span>
+        </label>
+        {% if field.errors %}
+            <span class="error">
+                {% for error in field.errors %}
+                    {{ error }}
+                {% endfor %}
+            </span>
+        {% endif %}
+    </div>
+{% endmacro %}

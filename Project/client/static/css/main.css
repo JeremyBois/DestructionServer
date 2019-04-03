@@ -1,0 +1,176 @@
+body {
+  padding: 60px 0;
+  background: #eee8d5;
+  /*background: #ededed;*/
+}
+
+.error {
+  color: #dc322f;
+  font-size: 1em;
+  padding: 0px 2px;
+}
+
+.alert {
+  font-size: 1.1em;
+}
+
+.alert-success {
+  background-color: #BCDEC3;
+}
+
+.alert-danger {
+  background-color: #F5B4B2;
+  color: #8A2522;
+}
+
+.alert-info {
+  color: #37506C;
+}
+
+.input-group {
+  margin: 10px 0;
+}
+
+.navbar-nav > li{
+  margin-left:20px;
+  margin-right:20px;
+}
+
+.navbar-collapse{
+  margin-left:50px;
+}
+
+.dropdown-menu {
+  position: relative;
+  float: none;
+}
+
+.btn-space {
+  margin-top:1px;
+  margin-bottom:1px;
+}
+
+.image-logo {
+  height:28px;
+  width: auto;
+}
+
+.top-buffer {
+  margin-top:15px;
+}
+
+.table_title-buffer {
+  margin-top:10px;
+  margin-bottom: :10px;
+}
+
+.borders_left_right {
+  border-right: #cdcdcd medium solid;
+  border-left: #cdcdcd medium solid;
+  border-radius: 10px;
+  -moz-border-radius: 10px;
+  -webkit-border-radius: 10px;
+}
+
+.bg-light-footer {
+  /*background-color: #eee8d5;*/
+  background-color: #E1D9C0;
+}
+
+section {
+  padding-bottom: 80px;
+}
+
+
+label{
+  position: relative;
+  cursor: pointer;
+  color: #666;
+  font-size: 20px;
+}
+
+/* Hide original box */
+input[type="checkbox"], input[type="radio"]{
+  position: absolute;
+  right: 9000px;
+}
+
+
+/*Check box*/
+input[type="checkbox"] + .label-text:before{
+  content: "\f096";
+  font-family: "FontAwesome";
+  speak: none;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+  -webkit-font-smoothing:antialiased;
+  /*width: 1em;*/
+  display: inline-block;
+  margin-right: 5px;
+}
+
+input[type="checkbox"]:checked + .label-text:before{
+  content: "\f14a";
+  color: #2980b9;
+  animation: effect 250ms ease-in;
+}
+
+input[type="checkbox"]:disabled + .label-text{
+  color: #aaa;
+}
+
+input[type="checkbox"]:disabled + .label-text:before{
+  content: "\f0c8";
+  color: #ccc;
+}
+
+
+/* Change the body width only on large device*/
+@media (min-width: 1200px) {
+  .container{
+      max-width: 1150px;
+  }
+}
+
+
+/*
+*
+* Loading circle
+*
+*/
+
+.loader {
+  border: 13px solid #E1D3A8;
+  border-top: 13px solid #EB6864;
+  border-radius: 50%;
+  width: 5rem;
+  height: 5rem;
+  animation: spin 2s infinite;
+  transition-timing-function: cubic-bezier(0.64, 0.57, 0.67, 1.53);
+  margin: 1rem;
+  margin-left:auto;
+  margin-right:auto;
+  display:block;
+
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
