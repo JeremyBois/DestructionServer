@@ -4,6 +4,9 @@
 # Flask
 from flask import Flask, render_template
 
+# SocketIO
+from flask_socketio import SocketIO
+
 # Crypto
 from flask_bcrypt import Bcrypt
 
@@ -69,4 +72,10 @@ def create_app(environnement: str = 'dev'):
     def server_error_page(error):
         return render_template('errors/500.html'), 500
 
-    return app
+    # SocketIO support
+    socketio = SocketIO(app)
+
+    from Project.server.main.views import mainIO_blueprint
+    mainIO_blueprint.init_io(socketio)
+
+    return app, socketio

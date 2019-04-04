@@ -24,10 +24,12 @@ if __name__ == "__main__":
     logging.getLogger('DestructServer').addHandler(api_handler)
 
     # Python anywhere import create_app from wsgi
-    app = create_app('dev')
+    app, socketio = create_app('dev')
 
     # Also add handler to Flask's logger for cases where Werkzeug isn't used as the underlying WSGI server.
     app.logger.addHandler(api_handler)
 
     port = int(os.environ.get('PORT', 5000))
-    app.run(host='0.0.0.0', port=port, debug=True)
+
+    # Wrap with socketIO
+    socketio.run(app, host='0.0.0.0', port=port, debug=True)
