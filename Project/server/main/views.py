@@ -17,15 +17,39 @@ def home():
 
 
 @mainIO_blueprint.on('message')
-def handle_message(message):
-    print('received message: ' + message)
+def handle_messages(msg):
+    """Server side event handler for an unnamed event using String messages."""
+    print('Unnamed String Event: ' + msg)
 
 
 @mainIO_blueprint.on('json')
 def handle_json(json):
-    print('received json: ' + str(json))
+    """Server side event handler for an unnamed event using JSON messages."""
+    print('Unnamed JSON Event: ' + str(json))
+
+
+# HOST
+
+@mainIO_blueprint.on('OnAddHost')
+def handle_add_host(json):
+    """Event send when a client start hosting."""
+    print('New host available: ')
+
+
+@mainIO_blueprint.on('OnRemoveHost')
+def handle_remove_host(json):
+    """Event send when a client stop hosting."""
+    print('Losing an host: ')
+
+
+# @TEST
 
 
 @mainIO_blueprint.on('MyEvent')
-def handle_my_custom_event(json):
+def handle_basic_event(json):
     print('received json: ' + str(json))
+
+
+# @mainIO_blueprint.on('MyJsonEvent')
+# def handle_MyJsonEvent(json):
+#     print('MyJsonEvent: ' + str(json))
