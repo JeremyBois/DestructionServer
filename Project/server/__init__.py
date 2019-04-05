@@ -13,6 +13,9 @@ from flask_bcrypt import Bcrypt
 # Jinja filters
 from . import jinjafilter
 
+# Data storage
+from Project.server.data_manager import DataManager
+
 
 import logging
 try:  # Python 2.7+
@@ -26,12 +29,16 @@ except ImportError:
 
 # Assign NullHandler as default root handler
 LOG = 'DestructServer'
-log = logging.getLogger(LOG)
-log.addHandler(logging.NullHandler())
+server_log = logging.getLogger(LOG)
+server_log.addHandler(logging.NullHandler())
 
 
 # Extensions
 bcrypt = Bcrypt()
+
+# Data storage
+container = DataManager()
+container.init_app(LOG)
 
 
 def create_app(environnement: str = 'dev'):

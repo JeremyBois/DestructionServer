@@ -11,8 +11,8 @@ basedir = Path(__file__).dirname().abspath()
 class BaseConfig(object):
     """Base configuration."""
     APP_NAME = 'Destruction Server App'
-    ROOT_DIR = basedir / "../../"
-    DATA_DIR = basedir / "../../Data"
+    ROOT_DIR = basedir / '../../'
+    DATA_DIR = basedir / '../../Data'
     BCRYPT_LOG_ROUNDS = 4     # minimal value for encryption
     SECRET_KEY = os.environ.get('SECRET_KEY')
     # SQLALCHEMY_TRACK_MODIFICATIONS = False
