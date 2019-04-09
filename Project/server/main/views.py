@@ -5,6 +5,9 @@ import logging
 from flask import render_template, Blueprint, request
 
 from Project.tools.socketIO_blueprint import IOBlueprint
+from Project.server.host import Host
+
+from flask_socketio import send
 
 from Project.server import container, LOG
 
@@ -50,8 +53,15 @@ def handle_add_host(json: dict):
         json['ipAddress'] = request.environ['HTTP_X_FORWARDED_FOR']
 
     print(json)
-    container.add_host(json['hostName'], json['ipAddress'], json['unrealName'])
+    container.add_host(Host.from_dict(json))
     print('Container updated (ADD -> {0}) : {1}'.format(len(container.hosts), container.hosts))
+
+
+@mainIO_blueprint.on('OnAskHosts')
+def handle_ask_hosts(msg: str):
+    """Event send when a client ask for hosts list."""
+    print("Asking for hosts")
+    send('OnHostsList', container.hosts_as_json(), broadcast=False, json=True)
 
 
 @mainIO_blueprint.on('OnRemoveHost')
@@ -70,16 +80,3 @@ def handle_remove_host(json: dict):
 
     container.remove_hosts(json['hostName'], json['ipAddress'])
     print('Container updated (DEL -> {0}) : {1}'.format(len(container.hosts), container.hosts))
-
-
-# @TEST
-
-
-@mainIO_blueprint.on('MyEvent')
-def handle_basic_event(json: dict):
-    print('received json: ' + str(json))
-
-
-# @mainIO_blueprint.on('MyJsonEvent')
-# def handle_MyJsonEvent(json):
-#     print('MyJsonEvent: ' + str(json))

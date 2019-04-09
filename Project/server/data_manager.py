@@ -2,15 +2,19 @@
 
 import logging
 
-from collections import namedtuple
+from flask import json
 
-# Internal type to store Host
-Host = namedtuple('HostData', 'player_name, ip_address, unreal_name')
+from Project.server.host import Host
+
+# Type checking
+from typing import NewType
+
+HostType = NewType("Host", Host)
 
 
 class DataManager(object):
 
-    """Container to store hosts and name mapping from player name to its IP"""
+    """Container to store HOSTS."""
 
     def __init__(self):
         super().__init__()
@@ -18,29 +22,29 @@ class DataManager(object):
         self.hosts = []  # Tuples of (player name, ip address, unreal name)
 
     def init_app(self, logMain: str) -> None:
-        # @TODO Add logging
+        # @TODO Add logging to methods
         self._logger = logging.getLogger(logMain + '.DataManager')
 
-    def add_host(self, player_name: str, ip_address: str, unreal_name: str) -> None:
+    def add_host(self, host: HostType) -> None:
         """Add a new host to existing list of hosts."""
-        self.hosts.append(Host(player_name, ip_address, unreal_name))
+        self.hosts.append(host)
 
     def remove_hosts_by_name(self, player_name: str) -> int:
         """Remove a existing host from"""
         oldCount = len(self.hosts)
-        self.hosts = [(n, ip, unreal) for (n, ip, unreal) in self.hosts if n == player_name]
+        self.hosts = [h for h in self.hosts if h.player_name == player_name]
         return oldCount - len(self.hosts)
 
     def remove_hosts_by_address(self, ip_address: str) -> int:
         """Remove a existing host based on ip_address"""
         oldCount = len(self.hosts)
-        self.hosts = [(n, ip, unreal) for (n, ip, unreal) in self.hosts if ip == ip_address]
+        self.hosts = [h for h in self.hosts if h.ip_address == ip_address]
         return oldCount - len(self.hosts)
 
     def remove_hosts(self, player_name: str, ip_address: str) -> int:
         """Remove hosts matching player_name and ip_adress. Return number of deleted items"""
         oldCount = len(self.hosts)
-        self.hosts = [(n, ip, unreal) for (n, ip, unreal) in self.hosts if (n, ip) != (player_name, ip_address)]
+        self.hosts = [h for h in self.hosts if (h.player_name, h.ip_address) != (player_name, ip_address)]
         return oldCount - len(self.hosts)
 
     def get_name_from(self, ip_address: str) -> str:
@@ -52,7 +56,5 @@ class DataManager(object):
 
     def hosts_as_json(self) -> str:
         """Create a JSON based on hosts."""
-        result = json.dumps([host._asdict() for hosts in self.hosts])
+        result = json.dumps([h.to_dict() for h in self.hosts])
         return result
-
-
