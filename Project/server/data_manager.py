@@ -29,22 +29,22 @@ class DataManager(object):
         """Add a new host to existing list of hosts."""
         self.hosts.append(host)
 
-    def remove_hosts_by_name(self, player_name: str) -> int:
+    def remove_hosts_by_name(self, host_name: str) -> int:
         """Remove a existing host from"""
         oldCount = len(self.hosts)
-        self.hosts = [h for h in self.hosts if h.player_name == player_name]
+        self.hosts = [h for h in self.hosts if h.hostName == host_name]
         return oldCount - len(self.hosts)
 
     def remove_hosts_by_address(self, ip_address: str) -> int:
         """Remove a existing host based on ip_address"""
         oldCount = len(self.hosts)
-        self.hosts = [h for h in self.hosts if h.ip_address == ip_address]
+        self.hosts = [h for h in self.hosts if h.ipAddress == ip_address]
         return oldCount - len(self.hosts)
 
-    def remove_hosts(self, player_name: str, ip_address: str) -> int:
-        """Remove hosts matching player_name and ip_adress. Return number of deleted items"""
+    def remove_hosts(self, host_name: str, ip_address: str) -> int:
+        """Remove hosts matching host_name and ip_adress. Return number of deleted items"""
         oldCount = len(self.hosts)
-        self.hosts = [h for h in self.hosts if (h.player_name, h.ip_address) != (player_name, ip_address)]
+        self.hosts = [h for h in self.hosts if (h.hostName, h.ipAddress) != (host_name, ip_address)]
         return oldCount - len(self.hosts)
 
     def get_name_from(self, ip_address: str) -> str:
@@ -56,5 +56,5 @@ class DataManager(object):
 
     def hosts_as_json(self) -> str:
         """Create a JSON based on hosts."""
-        result = json.dumps([h.to_dict() for h in self.hosts])
+        result = [h.to_dict() for h in self.hosts]
         return result

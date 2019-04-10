@@ -9,11 +9,16 @@ class Host(object):
 
     _SESSION_KEYS = {
         'OwningUserName',
+        'OwningUserId',
+        'BuildUniqueId',
         'NumOpenPrivateConnections',
+        'NumPrivateConnections',
         'NumOpenPublicConnections',
+        'NumPublicConnections',
         'bAllowJoinInProgress',
+        'bIsLANMatch',  # @TODO should be removed because LAN should not connect to server
         'SessionId',
-        'HostAddr'
+        'HostAddr'      # **PRIVATE** IP with port unlike self.ipAddress
     }
 
     def __init__(self, ip_address, unreal_name, host_name):
@@ -25,7 +30,8 @@ class Host(object):
         # Minimal required data
         self.session_infos = {}
 
-        # Ip used by socket to
+        # Ip retrieved from socket on python side
+        # Should be **PUBLIC** IP when server will be online
         self.ipAddress = ip_address
         self.unrealName = unreal_name
         self.hostName = host_name
@@ -50,7 +56,7 @@ class Host(object):
         _dict = {}
         for k, v in self.__dict__.items():
             if v is not None:
-                if k in ('user_infos', 'session_infos'):
+                if k in ('session_infos'):
                     for k_2, v_2 in v.items():
                         _dict[k_2] = v_2
                 else:
@@ -69,12 +75,18 @@ class Host(object):
                 continue
             elif (k in cls._SESSION_KEYS):
                 newHost.session_infos[k] = v
+            elif (k == 'user_infos'):
+                for k2, v2 in v.items():
+                    newHost.user_infos[k2] = v2
             else:
                 newHost.user_infos[k] = v
         return newHost
 
     def __str__(self):
         return str(self.to_dict())
+
+    def __repr__(self):
+        return repr(self.to_dict())
 
     def __eq__(self, other):
         if isinstance(other, Host):
