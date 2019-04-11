@@ -21,7 +21,7 @@ class Host(object):
         'HostAddr'      # **PRIVATE** IP with port unlike self.ipAddress
     }
 
-    def __init__(self, ip_address, unreal_name, host_name):
+    def __init__(self, ip_address, unreal_name, host_name, client_ID):
         """All information you always wanted about your host."""
         super().__init__()
 
@@ -35,6 +35,8 @@ class Host(object):
         self.ipAddress = ip_address
         self.unrealName = unreal_name
         self.hostName = host_name
+
+        self.client_ID = client_ID
 
     @classproperty
     def AvailableKeys(cls):
@@ -64,11 +66,11 @@ class Host(object):
         return _dict
 
     @classmethod
-    def from_dict(cls, hostMap: dict):
+    def from_dict(cls, hostMap: dict, clientID: str):
         defaultKeys = ('ipAddress', 'unrealName', 'hostName')
         newHost = cls(hostMap['ipAddress'],
                       hostMap['unrealName'],
-                      hostMap['hostName'])
+                      hostMap['hostName'], clientID)
 
         for k, v in hostMap.items():
             if (k in defaultKeys):
@@ -90,12 +92,10 @@ class Host(object):
 
     def __eq__(self, other):
         if isinstance(other, Host):
-            return (self.session_infos['HostAddr'] == other.session_infos['HostAddr'] and
-                    self.ipAddress == other.ipAddress
-                    )
+            return self.self.client_ID == other.self.client_ID
         return False
 
-    def IsExactlySame(self, other):
+    def IsSameData(self, other):
         if isinstance(other, Host):
             return (self.user_infos == other.user_infos and
                     self.session_infos == other.session_infos and
@@ -114,4 +114,4 @@ if __name__ == '__main__':
 
     test2 = Host.from_dict(test.to_dict())
     print(test2)
-    print('Can construct from flat dict: ', test == test2)
+    print('Can construct from flat dict: ', test.IsSameData(test2))

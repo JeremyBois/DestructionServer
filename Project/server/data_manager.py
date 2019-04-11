@@ -45,6 +45,11 @@ class DataManager(object):
         self.hosts = [h for h in self.hosts if (h.hostName, h.ipAddress) != (host_name, ip_address)]
         return oldCount - len(self.hosts)
 
+    def remove_host_by_ID(self, client_ID: str) -> int:
+        oldCount = len(self.hosts)
+        self.hosts = [h for h in self.hosts if h.client_ID != client_ID]
+        return oldCount - len(self.hosts)
+
     def get_name_from(self, ip_address: str) -> str:
         """Get first player name based on ip adress"""
         for name, ip, _ in self.hosts:
