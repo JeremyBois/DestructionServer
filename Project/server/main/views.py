@@ -18,6 +18,20 @@ mainIO_blueprint = IOBlueprint('/')
 mainIO_log = logging.getLogger(LOG + '.IO')
 
 
+# Host events
+OnAddHost = 'OnAddHost'
+OnRemoveHost = 'OnRemoveHost'
+
+# Join events
+OnAskHosts = 'OnAskHosts'
+OnHostsList = 'OnHostsList'
+
+# Update events
+OnUpdateHostConnection = 'OnUpdateHostConnection'
+OnUpdateHostSucceeded = 'OnUpdateHostSucceeded'
+OnUpdateHostFailed = 'OnUpdateHostFailed'
+
+
 @main_blueprint.route('/')
 def home():
     return render_template('home.html')
@@ -35,9 +49,7 @@ def handle_json(json: dict):
     print('Unnamed JSON Event: ' + str(json))
 
 
-# HOST
-
-@mainIO_blueprint.on('OnAddHost')
+@mainIO_blueprint.on(OnAddHost)
 def handle_add_host(json: dict):
     """Event send when a client start hosting."""
 
@@ -56,16 +68,16 @@ def handle_add_host(json: dict):
     print('Container updated (ADD -> {0}) : {1}'.format(len(container.hosts), container.hosts))
 
 
-@mainIO_blueprint.on('OnAskHosts')
+@mainIO_blueprint.on(OnAskHosts)
 def handle_ask_hosts(msg: str):
     """Event send when a client ask for hosts list."""
     print("Asking for hosts")
     hosts = container.hosts_as_json()
     print(hosts)
-    emit('OnHostsList', hosts, broadcast=False, json=True)
+    emit(OnHostsList, hosts, broadcast=False, json=True)
 
 
-@mainIO_blueprint.on('OnRemoveHost')
+@mainIO_blueprint.on(OnRemoveHost)
 def handle_remove_host(json: dict):
     """Event send when a client stop hosting."""
     if request.environ.get('HTTP_X_FORWARDED_FOR') is None:
@@ -81,3 +93,17 @@ def handle_remove_host(json: dict):
 
     container.remove_hosts(json['hostName'], json['ipAddress'])
     print('Container updated (DEL -> {0}) : {1}'.format(len(container.hosts), container.hosts))
+
+
+@mainIO_blueprint.on(OnUpdateHostConnection)
+def handle_updateConnection_host(json: dict):
+    """Update data connection informations about an host"""
+    sender = Host.from_dict(json)
+    print('Sender:: ', sender)
+    updatedHost = container.update_open_connections(sender)
+    if (updatedHost):
+        # Should notify other ??
+        emit(OnUpdateHostSucceeded, json, broadcast=False, json=True)
+    else:
+        emit(OnUpdateHostFailed, json, broadcast=False, json=True)
+    print('Sender:: ', updatedHost)

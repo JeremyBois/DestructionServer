@@ -90,6 +90,13 @@ class Host(object):
 
     def __eq__(self, other):
         if isinstance(other, Host):
+            return (self.session_infos['HostAddr'] == other.session_infos['HostAddr'] and
+                    self.ipAddress == other.ipAddress
+                    )
+        return False
+
+    def IsExactlySame(self, other):
+        if isinstance(other, Host):
             return (self.user_infos == other.user_infos and
                     self.session_infos == other.session_infos and
                     self.hostName == other.hostName and

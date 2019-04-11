@@ -2,8 +2,6 @@
 
 import logging
 
-from flask import json
-
 from Project.server.host import Host
 
 # Type checking
@@ -19,7 +17,7 @@ class DataManager(object):
     def __init__(self):
         super().__init__()
 
-        self.hosts = []  # Tuples of (player name, ip address, unreal name)
+        self.hosts = []
 
     def init_app(self, logMain: str) -> None:
         # @TODO Add logging to methods
@@ -58,3 +56,19 @@ class DataManager(object):
         """Create a JSON based on hosts."""
         result = [h.to_dict() for h in self.hosts]
         return result
+
+    def __contains__(self, data):
+        if isinstance(data, Host):
+            return data in self.hosts
+        else:
+            return False
+
+    def update_open_connections(self, newData: Host) -> Host:
+        for h in self.hosts:
+            if (newData == h):
+                # Update connections
+                h.session_infos['NumOpenPrivateConnections'] = newData.session_infos['NumOpenPrivateConnections']
+                h.session_infos['NumOpenPublicConnections'] = newData.session_infos['NumOpenPublicConnections']
+                return h
+
+        return None
