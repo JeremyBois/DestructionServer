@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+  <head>
+    <meta charset="utf-8">
+    <title>{{ config.APP_NAME }}{% block title %}{% endblock %}</title>
+
+    <!-- meta -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- styles -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
+    <link href="https://stackpath.bootstrapcdn.com/bootswatch/4.3.1/sandstone/bootstrap.min.css" rel="stylesheet" integrity="sha384-G3Fme2BM4boCE9tHx9zHvcxaQoAkksPQa/8oyn1Dzqv7gdcXChereUsXGx6LtbqA" crossorigin="anonymous">
+    <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+    <link href="{{url_for('static', filename='css/main.css')}}" rel="stylesheet" media="screen">
+    {% block css %}{% endblock %}
+  </head>
+
+  <body>
+
+    {% include 'header.html' %}
+
+    <div class="site-content">
+      <div class="container" role="main">
+
+        <!-- messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        <br>
+        <div class="row">
+          <div class="col-md-12">
+            {% for category, message in messages %}
+            <div class="alert alert-{{ category }}">
+              <a class="close" title="Close" href="#" data-dismiss="alert">&times;</a>
+              {{message}}
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+        {% endif %}
+        {% endwith %}
+
+        <!-- child template -->
+        {% block content %}{% endblock %}
+
+        <br>
+
+        <!-- errors -->
+        {% if error %}
+          <p class="error"><strong>Error:</strong> {{ error }}</p>
+        {% endif %}
+
+      </div>
+    </div>
+
+    <br><br>
+
+    {% include 'footer.html' %}
+
+    <!-- scripts -->
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
+
+    <!-- Keep track of application root -->
+    <script type=text/javascript>
+        var SCRIPT_ROOT = "{{ get_rootURL() }}";
+    </script>
+
+    {% block js %}{% endblock %}
+
+  </body>
+</html>

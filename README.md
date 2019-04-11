@@ -1,3 +1,9 @@
+# TODO
+
+  - Check logging in master
+  - Add logging
+  - Add unit testing
+
 # HOW TO GET READY
 
 ```

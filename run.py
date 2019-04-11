@@ -1,32 +1,35 @@
 # -*- coding:Utf8 -*-
 
+import os
 import logging
 
-from DestructServer.SimpleServer import DestructServer
-from DestructServer.Tools import log_basicConfig, add_stream_handler
+from Project.server import create_app
+from Project.tools.logger import add_file_handler
 
-import time
+from dotenv import load_dotenv
 
 
-# Start the development server using the run() method
 if __name__ == "__main__":
-    # Global variables for server
-    LOG_LEVEL = logging.DEBUG
-    PORT = 51515
-    HOST = '0.0.0.0'
-    LOG_NAME = 'DestructionServer.log'
+    # Load environment variables
+    load_dotenv(verbose=True, dotenv_path='.env')
 
-    # Setup logging
-    fmt = '%(asctime)s %(levelname)-9s: %(threadName)-26s|| %(name)-35s %(funcName)-25s >> %(message)s'
-    log_basicConfig(LOG_NAME, LOG_LEVEL, filemode='a', fmt=fmt)
-    fmt = '%(levelname)-9s: %(threadName)-26s|| %(name)-35s %(funcName)-25s >> %(message)s'
-    add_stream_handler(LOG_LEVEL, fmt=fmt)
+    # Minimal level for logs
+    log_level = logging.DEBUG
 
-    # Start server destruction
-    logging.debug('Server will start shortly.')
-    app = DestructServer(HOST, PORT)
-    app.Start()
+    # Keep stream handler for Werkzeug
+    logging.getLogger().setLevel(log_level)
 
-    # Wait for testing only
-    time.sleep(20)
-    app.Stop()
+    # Init logging for server
+    api_handler = add_file_handler('dev_api_log.log', parent='werkzeug', level=log_level)
+    logging.getLogger('DestructServer').addHandler(api_handler)
+
+    # Python anywhere import create_app from wsgi
+    app, socketio = create_app('dev')
+
+    # Also add handler to Flask's logger for cases where Werkzeug isn't used as the underlying WSGI server.
+    app.logger.addHandler(api_handler)
+
+    port = int(os.environ.get('PORT', 5000))
+
+    # Wrap with socketIO
+    socketio.run(app, host='0.0.0.0', port=port, debug=True)

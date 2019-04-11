@@ -1,0 +1,13 @@
+{% extends "_base.html" %}
+{% block page_title %}- Forbidden{% endblock %}
+{% block content %}
+
+<div class="jumbotron">
+  <div class="text-center">
+    <h1>403</h1>
+    <p>Vous ne disposez pas des droits nécessaires pour accéder à cette page.
+        Merci de vous <a href="{{ url_for('user.login')}}">Connecter</a>.</p>
+  </div>
+</div>
+
+{% endblock %}
