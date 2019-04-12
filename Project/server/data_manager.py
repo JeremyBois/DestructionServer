@@ -2,12 +2,17 @@
 
 import logging
 
+from collections import namedtuple
+
 from Project.server.host import Host
 
 # Type checking
 from typing import NewType
 
 HostType = NewType("Host", Host)
+
+# Client data
+Client = namedtuple('Client', 'sid, adrr, port')
 
 
 class DataManager(object):
@@ -18,10 +23,18 @@ class DataManager(object):
         super().__init__()
 
         self.hosts = []
+        self.clients = dict()
 
     def init_app(self, logMain: str) -> None:
         # @TODO Add logging to methods
         self._logger = logging.getLogger(logMain + '.DataManager')
+
+    def register_client(self, session_id, ip_addr, ip_port) -> Client:
+        self.clients[session_id] = Client(sid=session_id, adrr=ip_addr, port=ip_port)
+        return self.clients[session_id]
+
+    def unregister_client(self, session_id) -> Client:
+        return self.clients.pop(session_id, None)
 
     def add_host(self, host: HostType) -> None:
         """Add a new host to existing list of hosts."""
