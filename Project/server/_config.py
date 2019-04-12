@@ -46,13 +46,13 @@ class DevelopmentConfig(BaseConfig):
 #     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
 
 
-# class ProductionPythonAnywhereConfig(BaseConfig):
-#     """Production configuration."""
-#     BCRYPT_LOG_ROUNDS = 12
-#     WTF_CSRF_ENABLED = True
-#     PROPAGATE_EXCEPTIONS = False
+class ProductionPythonAnywhereConfig(BaseConfig):
+    """Production configuration."""
+    BCRYPT_LOG_ROUNDS = 12
+    WTF_CSRF_ENABLED = True
+    PROPAGATE_EXCEPTIONS = False
 
-#     # Sqlite with python anywhere
-#     DATABASE_NAME = os.environ.get('DATABASE_NAME')
-#     DATABASE_PATH = basedir / DATABASE_NAME
-#     SQLALCHEMY_DATABASE_URI = 'sqlite:///' + DATABASE_PATH
+    # # Sqlite with python anywhere
+    # DATABASE_NAME = os.environ.get('DATABASE_NAME')
+    # DATABASE_PATH = basedir / DATABASE_NAME
+    # SQLALCHEMY_DATABASE_URI = 'sqlite:///' + DATABASE_PATH
