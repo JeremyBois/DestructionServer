@@ -1,5 +1,3 @@
-# -*- coding:Utf8 -*-
-
 import os
 import logging
 
