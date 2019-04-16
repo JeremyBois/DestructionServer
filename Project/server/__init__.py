@@ -14,7 +14,7 @@ from flask_bcrypt import Bcrypt
 from . import jinjafilter
 
 # Data storage
-from Project.server.data_manager import DataManager
+from Project.server.data import DataManager
 
 
 import logging

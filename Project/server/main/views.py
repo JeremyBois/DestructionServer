@@ -5,7 +5,7 @@ import logging
 from flask import render_template, Blueprint, request
 
 from Project.tools.socketIO_blueprint import IOBlueprint
-from Project.server.host import Host
+from Project.server.data import Host
 
 from flask_socketio import emit
 
