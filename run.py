@@ -31,7 +31,7 @@ if __name__ == "__main__":
     app, socketio, udpServer = create_app('dev')
 
     # Also add handler to Flask's logger for cases where Werkzeug isn't used as the underlying WSGI server.
-    app.logger.addHandler(file_handler)
+    # app.logger.addHandler(file_handler)
 
     port = int(os.environ.get('PORT', 5000))
 

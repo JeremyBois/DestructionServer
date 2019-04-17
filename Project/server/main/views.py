@@ -25,7 +25,8 @@ OnRemoveHost = 'OnRemoveHost'
 # Join events
 OnAskHosts = 'OnAskHosts'
 OnHostsList = 'OnHostsList'
-OnJoinSuceeded = 'OnJoinSuceeded'
+OnJoinHost = 'OnJoinHost'
+OnLeaveHost = 'OnLeaveHost'
 
 # Update events
 OnUpdateHostConnection = 'OnUpdateHostConnection'
@@ -117,9 +118,14 @@ def on_updateConnection_host(json: dict):
         mainIO_log.warning('Host not updated {0}'.format(target_host))
 
 
-@mainIO_blueprint.on(OnJoinSuceeded)
-def on_clientJoin_success(msg):
-    mainIO_log.info('Client {0} (name = {1}) has join game'.format(request.sid, msg))
+@mainIO_blueprint.on(OnJoinHost)
+def on_client_join_host(game_name):
+    mainIO_log.info('Client {0} (name = {1}) has join game'.format(request.sid, game_name))
+
+
+@mainIO_blueprint.on(OnLeaveHost)
+def on_client_leave_host(game_name):
+    mainIO_log.info('Client {0} (name = {1}) has leave game'.format(request.sid, game_name))
 
 
 # Get public ip
