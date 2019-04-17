@@ -91,6 +91,6 @@ def create_app(environnement: str = 'dev'):
     from Project.server.hole_punching import RendezVousServerUDP
     udpServer = RendezVousServerUDP()
     if (not is_running_from_reloader()):
-        udpServer.start('localhost', 5000)
+        udpServer.start('0.0.0.0', 5000)
 
     return app, socketio, udpServer

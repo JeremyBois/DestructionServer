@@ -15,7 +15,8 @@ import socket
 
 if __name__ == '__main__':
     message = 'Hello server !'.encode()
-    server_address = ('localhost', 5000)
+    server_address = ('109.9.79.198', 5000)
+    # server_address = ('localhost', 5000)
 
     # Create a UDP socket wrapped in safe environment
     # Auto handle close event if program crash

@@ -138,7 +138,7 @@ class RendezVousServerUDP(object):
 
     def _send_msg(self, sock: socket.socket, msg: str, addr: Tuple[str, str]) -> None:
         # @TODO Sent information should be different based on message received
-        sock.sendto(msg.encode(self._encoding), addr)
+        print(sock.sendto(msg.encode(self._encoding), addr))
 
     def _bind(self) -> None:
         self._sock.bind((self._host, self._port))
@@ -154,7 +154,7 @@ class RendezVousServerUDP(object):
         self._running = False
         # Fake message to break infinite loop waiting for a message (see _receive_loop)
         with socket.socket(self._socketFamily, self._socketType) as s:
-            self._send_msg(s, '__AskClose__', (self._host, self._port))
+            self._send_msg(s, '__AskClose__', ('localhost', self._port))
 
     def _reset(self) -> None:
         self._receiveThread = None
@@ -169,6 +169,6 @@ class RendezVousServerUDP(object):
 
 if __name__ == '__main__':
     server = RendezVousServerUDP()
-    server.start('localhost', 5000)
+    server.start('0.0.0.0', 5000)
     time.sleep(10)
     server.stop()
