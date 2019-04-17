@@ -4,6 +4,8 @@ import logging
 from Project.server import create_app
 from Project.tools.logger import add_file_handler
 
+from werkzeug.serving import is_running_from_reloader
+
 from dotenv import load_dotenv
 
 
@@ -22,7 +24,7 @@ if __name__ == "__main__":
     logging.getLogger('DestructServer').addHandler(api_handler)
 
     # Python anywhere import create_app from wsgi
-    app, socketio = create_app('dev')
+    app, socketio, udpServer = create_app('dev')
 
     # Also add handler to Flask's logger for cases where Werkzeug isn't used as the underlying WSGI server.
     app.logger.addHandler(api_handler)
@@ -31,3 +33,7 @@ if __name__ == "__main__":
 
     # Wrap with socketIO
     socketio.run(app, host='0.0.0.0', port=port, debug=True)
+
+    # Closing gracefully UDP server
+    if (not is_running_from_reloader()):
+        print("Closing UDP server:", udpServer.stop())

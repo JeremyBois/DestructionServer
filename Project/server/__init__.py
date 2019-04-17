@@ -16,6 +16,10 @@ from . import jinjafilter
 # Data storage
 from Project.server.data import DataManager
 
+# Control server terminate at exit
+from Project.server.hole_punching import RendezVousServerUDP
+from werkzeug.serving import is_running_from_reloader
+
 
 import logging
 try:  # Python 2.7+
@@ -40,10 +44,12 @@ bcrypt = Bcrypt()
 container = DataManager()
 container.init_app(LOG)
 
+# UDP
+udpServer = RendezVousServerUDP()
+
 
 def create_app(environnement: str = 'dev'):
     """Initialize the application. Environnement can be 'dev', 'testing', 'prod', 'prod_pythonanywhere'."""
-
     app = Flask(__name__, template_folder='../client/templates', static_folder="../client/static")
     app.config.from_object('Project.server._config.DevelopmentConfig')
 
@@ -85,4 +91,8 @@ def create_app(environnement: str = 'dev'):
     from Project.server.main.views import mainIO_blueprint
     mainIO_blueprint.init_io(socketio)
 
-    return app, socketio
+    # UDP server should only be run once
+    if (not is_running_from_reloader()):
+        udpServer.start('localhost', 5000)
+
+    return app, socketio, udpServer

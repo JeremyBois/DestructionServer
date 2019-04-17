@@ -17,6 +17,9 @@ from queue import Queue
 from typing import Tuple
 
 
+__all__ = ['RendezVousServerUDP']
+
+
 class RendezVousServerUDP(object):
 
     """
@@ -25,7 +28,10 @@ class RendezVousServerUDP(object):
       - A new thread created after each client connection
     """
 
-    def __init__(self, host: str, port: int, encoding: str = 'utf-8'):
+    def __init__(self, encoding: str = 'utf-8'):
+        """
+            Select host and port used to communicate with the server.
+        """
         super().__init__()
 
         # Encoding used
@@ -37,8 +43,8 @@ class RendezVousServerUDP(object):
 
         # Store global data
         self._running = False
-        self._port = port
-        self._host = host
+        self._port = 0
+        self._host = 'localhost'
 
         # Init UDP socket
         self._socketFamily = socket.AF_INET
@@ -54,9 +60,13 @@ class RendezVousServerUDP(object):
         # Data
         self._recvContainer = Queue()  # Queue[str, str]
 
-    def start(self) -> bool:
+    def start(self, host: str, port: int) -> bool:
         """Start UDP server."""
         try:
+            # Update port used
+            self._port = port
+            self._host = host
+
             self._bind()
 
             # Start thread to handle clients incoming messages
@@ -79,8 +89,8 @@ class RendezVousServerUDP(object):
     def stop(self) -> bool:
         """Stop UDP server."""
         if not self._running:
-            self.logging.info('DestructServer is not running')
-            return True
+            self.logging.info('Rendez-vous server is not running')
+            return False
 
         try:
             self._stop()
@@ -134,7 +144,7 @@ class RendezVousServerUDP(object):
     def _bind(self) -> None:
         self._sock.bind((self._host, self._port))
         self.logging.debug('Socket binded (host = {0}) with port {1}.'.format(self._host, self._port))
-        print("Server Up and running on {0}:{1}".format(self._host, self._port))
+        print("Rendez-vous Server Up and running on {0}:{1}".format(self._host, self._port))
 
     def _stop(self) -> None:
         """
@@ -143,17 +153,23 @@ class RendezVousServerUDP(object):
         """
         # Safe as assignment is atomic
         self._running = False
-        # Fake message to break infinite loop waiting for a message (see _AcceptLoop)
+        # Fake message to break infinite loop waiting for a message (see _receive_loop)
         with socket.socket(self._socketFamily, self._socketType) as s:
-            s.sendto('Shutdown, please ?'.encode(self._encoding), ('localhost', self._port))
+            self._send_msg(s, '__AskClose__', (self._host, self._port))
 
     def _reset(self) -> None:
         self._receiveThread = None
         self._sendThread = None
 
+    def __del__(self):
+        """Needed in case user forgets to call stop explicitly."""
+        if (self._running):
+            self.logging.info('Close server before garbage collection.')
+            self.stop()
+
 
 if __name__ == '__main__':
-    server = RendezVousServerUDP('localhost', 5000)
-    server.start()
+    server = RendezVousServerUDP()
+    server.start('localhost', 5000)
     time.sleep(10)
     server.stop()
