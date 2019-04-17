@@ -16,6 +16,8 @@ from queue import Queue
 # Static typing checking
 from typing import Tuple
 
+from Project.server import LOG
+
 
 __all__ = ['RendezVousServerUDP']
 
@@ -38,7 +40,7 @@ class RendezVousServerUDP(object):
         self._encoding = encoding
 
         # Assign logger
-        self.logging = logging.getLogger(__name__)
+        self._logger = logging.getLogger(LOG + '.' + 'UDP')
         self._nameT = '{0}({2})::{1}'
 
         # Store global data
@@ -66,7 +68,6 @@ class RendezVousServerUDP(object):
             # Update port used
             self._port = port
             self._host = host
-
             self._bind()
 
             # Start thread to handle clients incoming messages
@@ -81,17 +82,16 @@ class RendezVousServerUDP(object):
 
         except socket.error as err:
             self._sock.close()
-            self.logging.fatal('Start failed due to (code {0}) --> {1}'.format(err.args[0], str(err)), exc_info=True)
-            self.logging.debug('Socket now closed (port {0}).'.format(self._port))
+            self._logger.fatal('Start failed due to (code {0}) --> {1}'.format(err.args[0], str(err)), exc_info=True)
+            self._logger.debug('Socket now closed (port {0}).'.format(self._port))
             return False
         return True
 
     def stop(self) -> bool:
         """Stop UDP server."""
         if not self._running:
-            self.logging.info('Rendez-vous server is not running')
+            self._logger.info('Rendez-vous server is not running')
             return False
-
         try:
             self._stop()
             # Wait for accept threads
@@ -100,34 +100,33 @@ class RendezVousServerUDP(object):
             # Clean
             self._reset()
         except socket.error as err:
-            self.logging.fatal('Stop failed due to (code {0}) --> {1}'.format(err.args[0], str(err)), exc_info=True)
+            self._logger.fatal('Stop failed due to (code {0}) --> {1}'.format(err.args[0], str(err)), exc_info=True)
         finally:
             self._sock.close()
-            self.logging.debug('Server socket now closed (port {0}).'.format(self._port))
-
-        return True
+            self._logger.debug('Server socket now closed (port {0}).'.format(self._port))
+            return True
 
     def _receive_loop(self) -> None:
         """Wait for incoming messages. Should run on a separated thread."""
         try:
             self._running = True
             while self._running:
-                self.logging.info('Waiting for connections.')
+                self._logger.info('Waiting for connections.')
                 # Wait for message (max size of 4096)
                 msg, addr = self._sock.recvfrom(4096)
 
                 # Handle message only if server still running
                 if self._running:
-                    self.logging.info('Receive data from {0}:{1}.'.format(addr[0], str(addr[1])))
+                    self._logger.info('Receive data from {0}:{1}.'.format(addr[0], str(addr[1])))
                     # Store message to handle it later
                     self._recvContainer.put((msg, addr), block=True)
         except socket.error as err:
-            self.logging.fatal('Accept loop failed due to (code {0}) --> {1}'.format(err.args[0], str(err)), exc_info=True)
+            self._logger.fatal('Receive loop failed due to (code {0}) --> {1}'.format(err.args[0], str(err)), exc_info=True)
 
     def _send_loop(self) -> None:
         """Wait for messages to be sent. Should run on a separated thread."""
         # @TODO use event loop instead of while loop
-        self.logging.debug('Waiting for messages to be sent.')
+        self._logger.debug('Waiting for messages to be sent.')
         with socket.socket(self._socketFamily, self._socketType) as s:
             while self._running:
                 # Sleep
@@ -143,7 +142,7 @@ class RendezVousServerUDP(object):
 
     def _bind(self) -> None:
         self._sock.bind((self._host, self._port))
-        self.logging.debug('Socket binded (host = {0}) with port {1}.'.format(self._host, self._port))
+        self._logger.debug('Socket binded (host = {0}) with port {1}.'.format(self._host, self._port))
         print("Rendez-vous Server Up and running on {0}:{1}".format(self._host, self._port))
 
     def _stop(self) -> None:
@@ -164,7 +163,7 @@ class RendezVousServerUDP(object):
     def __del__(self):
         """Needed in case user forgets to call stop explicitly."""
         if (self._running):
-            self.logging.info('Close server before garbage collection.')
+            self._logger.info('Close server before garbage collection.')
             self.stop()
 
 

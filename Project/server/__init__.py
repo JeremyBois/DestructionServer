@@ -17,7 +17,6 @@ from . import jinjafilter
 from Project.server.data import DataManager
 
 # Control server terminate at exit
-from Project.server.hole_punching import RendezVousServerUDP
 from werkzeug.serving import is_running_from_reloader
 
 
@@ -32,7 +31,7 @@ except ImportError:
             pass
 
 # Assign NullHandler as default root handler
-LOG = 'DestructServer'
+LOG = 'DestruckServer'
 server_log = logging.getLogger(LOG)
 server_log.addHandler(logging.NullHandler())
 
@@ -43,9 +42,6 @@ bcrypt = Bcrypt()
 # Data storage
 container = DataManager()
 container.init_app(LOG)
-
-# UDP
-udpServer = RendezVousServerUDP()
 
 
 def create_app(environnement: str = 'dev'):
@@ -92,6 +88,8 @@ def create_app(environnement: str = 'dev'):
     mainIO_blueprint.init_io(socketio)
 
     # UDP server should only be run once
+    from Project.server.hole_punching import RendezVousServerUDP
+    udpServer = RendezVousServerUDP()
     if (not is_running_from_reloader()):
         udpServer.start('localhost', 5000)
 
