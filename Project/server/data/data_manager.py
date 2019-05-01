@@ -38,7 +38,8 @@ class DataManager(object):
 
     def add_host(self, host: HostType) -> None:
         """Add a new host to existing list of hosts."""
-        self.hosts.append(host)
+        if host not in self.hosts:
+            self.hosts.append(host)
 
     def remove_hosts_by_name(self, host_name: str) -> int:
         """Remove a existing host from"""

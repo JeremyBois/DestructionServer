@@ -88,8 +88,8 @@ def create_app(environnement: str = 'dev'):
     mainIO_blueprint.init_io(socketio)
 
     # UDP server should only be run once
-    from Project.server.hole_punching import RendezVousServerUDP
-    udpServer = RendezVousServerUDP()
+    from Project.server.hole_punching import DestruckUDPServer
+    udpServer = DestruckUDPServer()
     if (not is_running_from_reloader()):
         udpServer.start('0.0.0.0', 5000)
 

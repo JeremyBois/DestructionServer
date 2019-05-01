@@ -98,10 +98,11 @@ def on_ask_hosts(msg: str):
 
 
 @mainIO_blueprint.on(OnRemoveHost)
-def on_remove_host(json: dict):
+def on_remove_host(player_name: str):
     """Event send when a client stop hosting."""
     container.remove_host_by_ID(request.sid)
-    mainIO_log.info('Container updated (DEL -> {0})'.format(len(container.hosts)))
+    mainIO_log.info('Container updated (DEL ({1}) -> {0})'.format(len(container.hosts),
+                                                                  player_name))
 
 
 @mainIO_blueprint.on(OnUpdateHostConnection)
@@ -119,13 +120,13 @@ def on_updateConnection_host(json: dict):
 
 
 @mainIO_blueprint.on(OnJoinHost)
-def on_client_join_host(game_name):
-    mainIO_log.info('Client {0} (name = {1}) has join game'.format(request.sid, game_name))
+def on_client_join_host(player_name: str):
+    mainIO_log.info('Client {0} (name = {1}) has join game'.format(request.sid, player_name))
 
 
 @mainIO_blueprint.on(OnLeaveHost)
-def on_client_leave_host(game_name):
-    mainIO_log.info('Client {0} (name = {1}) has leave game'.format(request.sid, game_name))
+def on_client_leave_host(player_name: str):
+    mainIO_log.info('Client {0} (name = {1}) has leave game'.format(request.sid, player_name))
 
 
 # Get public ip

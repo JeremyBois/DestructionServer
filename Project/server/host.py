@@ -16,7 +16,6 @@ class Host(object):
         'NumOpenPublicConnections',
         'NumPublicConnections',
         'bAllowJoinInProgress',
-        'bIsLANMatch',  # @TODO should be removed because LAN should not connect to server
         'SessionId',
         'HostAddr'      # **PRIVATE** IP with port unlike self.ipAddress
     }
