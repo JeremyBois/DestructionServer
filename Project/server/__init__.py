@@ -14,7 +14,10 @@ from flask_bcrypt import Bcrypt
 from . import jinjafilter
 
 # Data storage
-from Project.server.data_manager import DataManager
+from Project.server.data import DataManager
+
+# Control server terminate at exit
+from werkzeug.serving import is_running_from_reloader
 
 
 import logging
@@ -28,7 +31,7 @@ except ImportError:
             pass
 
 # Assign NullHandler as default root handler
-LOG = 'DestructServer'
+LOG = 'DestruckServer'
 server_log = logging.getLogger(LOG)
 server_log.addHandler(logging.NullHandler())
 
@@ -43,7 +46,6 @@ container.init_app(LOG)
 
 def create_app(environnement: str = 'dev'):
     """Initialize the application. Environnement can be 'dev', 'testing', 'prod', 'prod_pythonanywhere'."""
-
     app = Flask(__name__, template_folder='../client/templates', static_folder="../client/static")
     app.config.from_object('Project.server._config.DevelopmentConfig')
 
@@ -85,4 +87,10 @@ def create_app(environnement: str = 'dev'):
     from Project.server.main.views import mainIO_blueprint
     mainIO_blueprint.init_io(socketio)
 
-    return app, socketio
+    # UDP server should only be run once
+    from Project.server.hole_punching import DestruckUDPServer
+    udpServer = DestruckUDPServer()
+    if (not is_running_from_reloader()):
+        udpServer.start('0.0.0.0', 5000)
+
+    return app, socketio, udpServer
